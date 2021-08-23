@@ -1,0 +1,271 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>oracle常用sql语句集合 | Alexcld</title><meta name="keywords" content="oracle常用sql语句集合"><meta name="author" content="Alex"><meta name="copyright" content="Alex"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="1、说明：创建数据库Create DATABASE database-name2、说明：删除数据库drop database dbname3、说明：备份sql server— 创建备份数据的 deviceUSE masterEXEC sp_addumpdevice ‘disk‘, ‘testBack‘, ‘c:\mssql7backup\MyNwind_1.dat‘— 开始备份BACKUP DAT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="oracle常用sql语句集合">
+<meta property="og:url" content="http://alexcld.com/posts/1651.html">
+<meta property="og:site_name" content="Alexcld">
+<meta property="og:description" content="1、说明：创建数据库Create DATABASE database-name2、说明：删除数据库drop database dbname3、说明：备份sql server— 创建备份数据的 deviceUSE masterEXEC sp_addumpdevice ‘disk‘, ‘testBack‘, ‘c:\mssql7backup\MyNwind_1.dat‘— 开始备份BACKUP DAT">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.alexcld.com/img/saobopengke.jpg">
+<meta property="article:published_time" content="2020-12-23T07:34:47.000Z">
+<meta property="article:modified_time" content="2020-12-23T07:36:00.263Z">
+<meta property="article:author" content="Alex">
+<meta property="article:tag" content="oracle常用sql语句集合">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.alexcld.com/img/saobopengke.jpg"><link rel="shortcut icon" href="https://img.alexcld.com/img/author.png"><link rel="canonical" href="http://alexcld.com/posts/1651"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?ed29f24d552b68e914260fcff2860767";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: {"text":"I,LOVE,YOU","fontSize":"15px"},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2020-12-23 15:36:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><link rel="stylesheet" href="APlayer.min.css"><div id="aplayer"></div><script src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js" async></script><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = '2'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/flipcountdown.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/pool.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/iconfont.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/alexclownfish/hexo-gitcalendar@v1.0/gitcalendar.css"/><meta name="generator" content="Hexo 5.2.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://img.alexcld.com/img/author.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/download"><i class="fa-fw fa fa-download"></i><span> 下载</span></a></div><div class="menus_item"><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 追剧怪</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/books/"><i class="fa-fw fa fa-heartbeat"></i><span> 书架</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" href="/tgxxl/"><i class="fa-fw fa fa-gamepad"></i><span> 糖果消消乐</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 博主</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.alexcld.com/img/saobopengke.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Alexcld</a></span><span id="weather-v2-plugin-simple"></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/download"><i class="fa-fw fa fa-download"></i><span> 下载</span></a></div><div class="menus_item"><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 追剧怪</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/books/"><i class="fa-fw fa fa-heartbeat"></i><span> 书架</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" href="/tgxxl/"><i class="fa-fw fa fa-gamepad"></i><span> 糖果消消乐</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 博主</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">oracle常用sql语句集合</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-12-23T07:34:47.000Z" title="发表于 2020-12-23 15:34:47">2020-12-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-12-23T07:36:00.263Z" title="更新于 2020-12-23 15:36:00">2020-12-23</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>1、说明：创建数据库<br>Create DATABASE database-name<br>2、说明：删除数据库<br>drop database dbname<br>3、说明：备份sql server<br>— 创建备份数据的 device<br>USE master<br>EXEC sp_addumpdevice ‘disk‘, ‘testBack‘, ‘c:\mssql7backup\MyNwind_1.dat‘<br>— 开始备份<br>BACKUP DATABASE pubs TO testBack<br>4、说明：创建新表<br>create table tabname(col1 type1 [not null] [primary key],col2 type2 [not null],…)<br>根据已有的表创建新表：<br>A：create table tab_new like tab_old (使用旧表创建新表)<br>B：create table tab_new as select col1,col2… from tab_old definition only<br>5、说明：删除新表<br>drop table tabname<br>6、说明：增加一个列<br>Alter table tabname add column col type<br>alter table student add dd char;<br>注：列增加后将不能删除。DB2中列加上后数据类型也不能改变，唯一能改变的是增加varchar类型的长度。<br>7、说明：添加主键： Alter table tabname add primary key(col)<br>alter table student add primary key(sno);<br>说明：删除主键： Alter table tabname drop primary key(col)<br>Alter table TF_F_USER_RES drop primary key(USER_ID, PARTITION_ID, RES_TYPE_CODE, RES_CODE, START_DATE);<br>8、说明：创建索引：create [unique] index idxname on tabname(col….)<br>删除索引：drop index idxname<br>注：索引是不可更改的，想更改必须删除重新建。<br>9、说明：创建视图：create view viewname as select statement<br>删除视图：drop view viewname<br>10、说明：几个简单的基本的sql语句<br>选择：select * from table1 where 范围<br>插入：insert into table1(field1,field2) values(value1,value2)<br>删除：delete from table1 where 范围<br>更新：update table1 set field1=value1 where 范围<br>查找：select * from table1 where field1 like ’%value1%’ —like的语法很精妙，查资料!<br>排序：select * from table1 order by field1,field2 [desc]<br>总数：select count as totalcount from table1<br>求和：select sum(field1) as sumvalue from table1<br>平均：select avg(field1) as avgvalue from table1<br>最大：select max(field1) as maxvalue from table1<br>最小：select min(field1) as minvalue from table1<br>11、说明：几个高级查询运算词<br>A： UNION 运算符<br>UNION 运算符通过组合其他两个结果表（例如 TABLE1 和 TABLE2）并消去表中任何重复行而派生出一个结果表。当 ALL 随 UNION 一起使用时（即 UNION ALL），不消除重复行。两种情况下，派生表的每一行不是来自 TABLE1 就是来自 TABLE2。<br>B： EXCEPT 运算符<br>EXCEPT 运算符通过包括所有在 TABLE1 中但不在 TABLE2 中的行并消除所有重复行而派生出一个结果表。当 ALL 随 EXCEPT 一起使用时 (EXCEPT ALL)，不消除重复行。<br>C： INTERSECT 运算符<br>INTERSECT 运算符通过只包括 TABLE1 和 TABLE2 中都有的行并消除所有重复行而派生出一个结果表。当 ALL 随 INTERSECT 一起使用时 (INTERSECT ALL)，不消除重复行。<br>注：使用运算词的几个查询结果行必须是一致的。<br>12、说明：使用外连接<br>A、left outer join：<br>左外连接（左连接）：结果集几包括连接表的匹配行，也包括左连接表的所有行。<br>SQL: select a.a, a.b, a.c, b.c, b.d, b.f from a LEFT OUT JOIN b ON a.a = b.c<br>B：right outer join:<br>右外连接(右连接)：结果集既包括连接表的匹配连接行，也包括右连接表的所有行。<br>C：full outer join：<br>全外连接：不仅包括符号连接表的匹配行，还包括两个连接表中的所有记录。</p>
+<p>二、提升</p>
+<p>1、说明：复制表(只复制结构,源表名：a 新表名：b) (Access可用)<br>法一：select * into b from a where 1&lt;&gt;1<br>法二：select top 0 * into b from a<br>2、说明：拷贝表(拷贝数据,源表名：a 目标表名：b) (Access可用)<br>insert into b(a, b, c) select d,e,f from b;</p>
+<p>3、说明：跨数据库之间表的拷贝(具体数据使用绝对路径) (Access可用)<br>insert into b(a, b, c) select d,e,f from b in ‘具体数据库’ where 条件<br>例子：…from b in ‘“&amp;Server.MapPath(“.”&amp;”\data.mdb” &amp;”‘ where…</p>
+<p>4、说明：子查询(表名1：a 表名2：b)<br>select a,b,c from a where a IN (select d from b 或者: select a,b,c from a where a IN (1,2,3)</p>
+<p>5、说明：显示文章、提交人和最后回复时间<br>select a.title,a.username,b.adddate from table a,(select max(adddate) adddate from table where table.title=a.title) b</p>
+<p>6、说明：外连接查询(表名1：a 表名2：b)<br>select a.a, a.b, a.c, b.c, b.d, b.f from a LEFT OUT JOIN b ON a.a = b.c</p>
+<p>7、说明：在线视图查询(表名1：a<br>select * from (Select a,b,c FROM a) T where t.a &gt; 1;</p>
+<p>8、说明：between的用法,between限制查询数据范围时包括了边界值,not between不包括<br>select * from table1 where time between time1 and time2<br>select a,b,c, from table1 where a not between 数值1 and 数值2</p>
+<p>9、说明：in 的使用方法<br>select * from table1 where a [not] in (‘值1’,’值2’,’值4’,’值6’)</p>
+<p>10、说明：两张关联表，删除主表中已经在副表中没有的信息<br>delete from table1 where not exists ( select * from table2 where table1.field1=table2.field1</p>
+<p>11、说明：四表联查问题：<br>select * from a left inner join b on a.a=b.b right inner join c on a.a=c.c inner join d on a.a=d.d where …</p>
+<p>12、说明：日程安排提前五分钟提醒<br>SQL: select * from 日程安排 where datediff(‘minute‘,f开始时间,getdate())&gt;5</p>
+<p>13、说明：一条sql 语句搞定数据库分页<br>select top 10 b.* from (select top 20 主键字段,排序字段 from 表名 order by 排序字段 desc) a,表名 b where b.主键字段 = a.主键字段 order by a.排序字段</p>
+<p>14、说明：前10条记录<br>select top 10 * form table1 where 范围</p>
+<p>15、说明：选择在每一组b值相同的数据中对应的a最大的记录的所有信息(类似这样的用法可以用于论坛每月排行榜,每月热销产品分析,按科目成绩排名,等等.)<br>select a,b,c from tablename ta where a=(select max(a) from tablename tb where tb.b=ta.b)</p>
+<p>16、说明：包括所有在 TableA 中但不在 TableB和TableC 中的行并消除所有重复行而派生出一个结果表<br>(select a from tableA except (select a from tableB) except (select a from tableC)</p>
+<p>17、说明：随机取出10条数据<br>select top 10 * from tablename order by newid()</p>
+<p>18、说明：随机选择记录<br>select newid()</p>
+<p>19、说明：删除重复记录<br>Delete from tablename where id not in (select max(id) from tablename group by col1,col2,…)</p>
+<p>20、说明：列出数据库里所有的表名<br>select name from sysobjects where type=‘U‘</p>
+<p>21、说明：列出表里的所有的<br>select name from syscolumns where id=object_id(‘TableName‘)</p>
+<p>22、说明：列示type、vender、pcs字段，以type字段排列，case可以方便地实现多重选择，类似select 中的case。<br>select type,sum(case vender when ‘A‘ then pcs else 0 end),sum(case vender when ‘C‘ then pcs else 0 end),sum(case vender when ‘B‘ then pcs else 0 end) FROM tablename group by type<br>显示结果：<br>type vender pcs<br>电脑 A 1<br>电脑 A 1<br>光盘 B 2<br>光盘 A 2<br>手机 B 3<br>手机 C 3</p>
+<p>23、说明：初始化表table1</p>
+<p>TRUNCATE TABLE table1</p>
+<p>24、说明：选择从10到15的记录<br>select top 5 * from (select top 15 * from table order by id asc) table_别名 order by id desc</p>
+<p>三、技巧</p>
+<p>1、1=1，1=2的使用，在SQL语句组合时用的较多</p>
+<p>“where 1=1”是表示选择全部“where 1=2”全部不选，<br>如：<br>if @strWhere !=‘<br>begin<br>set @strSQL = ‘select count() as Total from [‘ + @tblName + ‘] where ‘ + @strWhere<br>end<br>else<br>begin<br>set @strSQL = ‘select count() as Total from [‘ + @tblName + ‘]‘<br>end</p>
+<p>我们可以直接写成<br>set @strSQL = ‘select count(*) as Total from [‘ + @tblName + ‘] where 1=1 安定‘+ @strWhere</p>
+<p>2、收缩数据库<br>–重建索引<br>DBCC REINDEX<br>DBCC INDEXDEFRAG<br>–收缩数据和日志<br>DBCC SHRINKDB<br>DBCC SHRINKFILE</p>
+<p>3、压缩数据库<br>dbcc shrinkdatabase(dbname)</p>
+<p>4、转移数据库给新用户以已存在用户权限<br>exec sp_change_users_login ‘update_one‘,‘newname‘,‘oldname‘<br>go</p>
+<p>5、检查备份集<br>RESTORE VERIFYONLY from disk=‘E:\dvbbs.bak‘</p>
+<p>6、修复数据库<br>Alter DATABASE [dvbbs] SET SINGLE_USER<br>GO<br>DBCC CHECKDB(‘dvbbs‘,repair_allow_data_loss) WITH TABLOCK<br>GO<br>Alter DATABASE [dvbbs] SET MULTI_USER<br>GO</p>
+<p>7、日志清除<br>SET NOCOUNT ON<br>DECLARE @LogicalFileName sysname,<br>@MaxMinutes INT,<br>@NewSize INT</p>
+<p>USE tablename – 要操作的数据库名<br>Select @LogicalFileName = ‘tablename_log‘, – 日志文件名<br>@MaxMinutes = 10, – Limit on time allowed to wrap log.<br>@NewSize = 1 – 你想设定的日志文件的大小(M)</p>
+<p>– Setup / initialize<br>DECLARE @OriginalSize int<br>Select @OriginalSize = size<br>FROM sysfiles<br>Where name = @LogicalFileName<br>Select ‘Original Size of ‘ + db_name() + ‘ LOG is ‘ +<br>CONVERT(VARCHAR(30),@OriginalSize) + ‘ 8K pages or ‘ +<br>CONVERT(VARCHAR(30),(@OriginalSize*8/1024)) + ‘MB‘<br>FROM sysfiles<br>Where name = @LogicalFileName<br>Create TABLE DummyTrans<br>(DummyColumn char (8000) not null)</p>
+<p>DECLARE @Counter INT,<br>@StartTime DATETIME,<br>@TruncLog VARCHAR(255)<br>Select @StartTime = GETDATE(),<br>@TruncLog = ‘BACKUP LOG ‘ + db_name() + ‘ WITH TRUNCATE_ONLY‘</p>
+<p>DBCC SHRINKFILE (@LogicalFileName, @NewSize)<br>EXEC (@TruncLog)<br>– Wrap the log if necessary.<br>WHILE @MaxMinutes &gt; DATEDIFF (mi, @StartTime, GETDATE()) – time has not expired<br>AND @OriginalSize = (Select size FROM sysfiles Where name = @LogicalFileName)<br>AND (@OriginalSize * 8 /1024) &gt; @NewSize<br>BEGIN – Outer loop.<br>Select @Counter = 0<br>WHILE ((@Counter &lt; @OriginalSize / 16) AND (@Counter &lt; 50000))<br>BEGIN – update<br>Insert DummyTrans VALUES (‘Fill Log‘)<br>Delete DummyTrans<br>Select @Counter = @Counter + 1<br>END<br>EXEC (@TruncLog)<br>END<br>Select ‘Final Size of ‘ + db_name() + ‘ LOG is ‘ +<br>CONVERT(VARCHAR(30),size) + ‘ 8K pages or ‘ +<br>CONVERT(VARCHAR(30),(size*8/1024)) + ‘MB‘<br>FROM sysfiles<br>Where name = @LogicalFileName<br>Drop TABLE DummyTrans<br>SET NOCOUNT OFF</p>
+<p>8、说明：更改某个表<br>exec sp_changeobjectowner ‘tablename‘,‘dbo‘</p>
+<p>9、存储更改全部表</p>
+<p>Create PROCEDURE dbo.User_ChangeObjectOwnerBatch<br>@OldOwner as NVARCHAR(128),<br>@NewOwner as NVARCHAR(128)<br>AS</p>
+<p>DECLARE @Name as NVARCHAR(128)<br>DECLARE @Owner as NVARCHAR(128)<br>DECLARE @OwnerName as NVARCHAR(128)</p>
+<p>DECLARE curObject CURSOR FOR<br>select ‘Name‘ = name,<br>‘Owner‘ = user_name(uid)<br>from sysobjects<br>where user_name(uid)=@OldOwner<br>order by name</p>
+<p>OPEN curObject<br>FETCH NEXT FROM curObject INTO @Name, @Owner<br>WHILE(@@FETCH_STATUS=0)<br>BEGIN<br>if @Owner=@OldOwner<br>begin<br>set @OwnerName = @OldOwner + ‘.‘ + rtrim(@Name)<br>exec sp_changeobjectowner @OwnerName, @NewOwner<br>end<br>– select @name,@NewOwner,@OldOwner</p>
+<p>FETCH NEXT FROM curObject INTO @Name, @Owner<br>END</p>
+<p>close curObject<br>deallocate curObject<br>GO</p>
+<p>10、SQL SERVER中直接循环写入数据<br>declare @i int<br>set @i=1<br>while @i&lt;30<br>begin<br>insert into test (userid) values(@i)<br>set @i=@i+1<br>end</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Alex</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://alexcld.com/posts/1651.html">http://alexcld.com/posts/1651.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://alexcld.com" target="_blank">Alexcld</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/oracle%E5%B8%B8%E7%94%A8sql%E8%AF%AD%E5%8F%A5%E9%9B%86%E5%90%88/">oracle常用sql语句集合</a></div><div class="post_share"><div class="social-share" data-image="https://img.alexcld.com/img/saobopengke.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/2356.html"><img class="prev-cover" src="https://img.alexcld.com/img/192110-1568028070e5ea.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">让Linux虚拟机连接宿主机并且能够上网</div></div></a></div><div class="next-post pull-right"><a href="/posts/3246.html"><img class="next-cover" src="https://img.alexcld.com/img/nvpu1.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">解决oracle不能上下箭头翻历史命令问题</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Twikoo</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="twikoo"></div></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://img.alexcld.com/img/author.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Alex</div><div class="author-info__description">children don't lie</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/alexclownfish"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/alexclownfish" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:ywz0207@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is AKA Alex,respect yeah</div><timing></timing></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/43435.html" title="创建lvm格式磁盘分区"><img src="https://img.alexcld.com/img/girl3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="创建lvm格式磁盘分区"/></a><div class="content"><a class="title" href="/posts/43435.html" title="创建lvm格式磁盘分区">创建lvm格式磁盘分区</a><time datetime="2021-08-12T06:02:22.000Z" title="发表于 2021-08-12 14:02:22">2021-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/63478.html" title="k8s+jenkins实现CI，CD"><img src="https://img.alexcld.com/img/222823-160337690344c5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="k8s+jenkins实现CI，CD"/></a><div class="content"><a class="title" href="/posts/63478.html" title="k8s+jenkins实现CI，CD">k8s+jenkins实现CI，CD</a><time datetime="2021-07-28T06:07:46.000Z" title="发表于 2021-07-28 14:07:46">2021-07-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6543.html" title="alertmanager钉钉报警"><img src="https://img.alexcld.com/img/nvpu3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="alertmanager钉钉报警"/></a><div class="content"><a class="title" href="/posts/6543.html" title="alertmanager钉钉报警">alertmanager钉钉报警</a><time datetime="2021-07-27T06:37:35.000Z" title="发表于 2021-07-27 14:37:35">2021-07-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/267647.html" title="监控体系部署之后走上了grafana模板踩坑之路"><img src="https://img.alexcld.com/img/195251-16080331718ccc.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="监控体系部署之后走上了grafana模板踩坑之路"/></a><div class="content"><a class="title" href="/posts/267647.html" title="监控体系部署之后走上了grafana模板踩坑之路">监控体系部署之后走上了grafana模板踩坑之路</a><time datetime="2021-07-22T05:33:31.000Z" title="发表于 2021-07-22 13:33:31">2021-07-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/24142.html" title="Prometheus邮件告警自定义模板的触发时间为utc的解决方法"><img src="https://img.alexcld.com/img/193615-1568028975fe7b.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Prometheus邮件告警自定义模板的触发时间为utc的解决方法"/></a><div class="content"><a class="title" href="/posts/24142.html" title="Prometheus邮件告警自定义模板的触发时间为utc的解决方法">Prometheus邮件告警自定义模板的触发时间为utc的解决方法</a><time datetime="2021-07-21T09:30:06.000Z" title="发表于 2021-07-21 17:30:06">2021-07-21</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://img.alexcld.com/img/saobopengke.jpg)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Alex</div><div class="framework-info"><span> </span><a target="_blank" rel="noopener" href="https://github.com/alexclownfish">Github</a><span class="footer-separator">|</span><span> </span><a target="_blank" rel="noopener" href="https://me.csdn.net/weixin_45509582">CSDN</a></div><div class="footer_custom_text"><span id="runtime"></span></div><div class="icp"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/"><img class="icp-icon" src="/img/icp.png" alt="ICP"/><span>豫ICP备2020032561号-1</span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: 'rdtTOtMkfivtPvkQaaDXmJUd-gzGzoHsz',
+      appKey: 'E68vw0GUqAynKmIiHtw9FLRA',
+      placeholder: '留下你的看法吧！！',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'zh-CN',
+      recordIP: true,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: true,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign({}, initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadTwikoo () {
+  function init () {
+    twikoo.init({ 
+      envId: '' 
+    })
+  }
+
+  if (typeof twikoo.init === 'function') {
+    init()
+  } else {
+    $.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js', init)
+  }
+}
+
+if ('Valine' === 'Twikoo' || !false) {
+  if (false) btf.loadComment(document.getElementById('twikoo'), loadTwikoo)
+  else loadTwikoo()
+} else {
+  function loadOtherComment () {
+    loadTwikoo()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/js/flipcountdown.js"></script><script data-pjax src="/js/runtime.js"></script><script src="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/js/pool.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script><script src="https://cdn.jsdelivr.net/gh/alexclownfish/hexo-gitcalendar@v1.0/gitcalendar.js"></script><script src="https://apip.weatherdt.com/simple/static/js/weather-simple-common.js?v=2.0"></script><script src="/js/alexweather.js"></script><script src="/js/timing.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" async="async" mobile="false"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/tororo.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>

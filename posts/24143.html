@@ -1,0 +1,252 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>clickhouse单机部署及实时同步mysql数据 | Alexcld</title><meta name="keywords" content="clickhouse单机部署及实时同步mysql数据"><meta name="author" content="Alex"><meta name="copyright" content="Alex"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="clickhouse单机部署及实时同步mysql数据clickhouse20.8.3部分示例版本：20.8.3环境检查12grep -q sse4_2 &#x2F;proc&#x2F;cpuinfo &amp;&amp; echo &quot;SSE 4.2 supported&quot; || echo &quot;SSE 4.2 not supported&quot;显示：SSE 4.2 su">
+<meta property="og:type" content="article">
+<meta property="og:title" content="clickhouse单机部署及实时同步mysql数据">
+<meta property="og:url" content="http://alexcld.com/posts/24143.html">
+<meta property="og:site_name" content="Alexcld">
+<meta property="og:description" content="clickhouse单机部署及实时同步mysql数据clickhouse20.8.3部分示例版本：20.8.3环境检查12grep -q sse4_2 &#x2F;proc&#x2F;cpuinfo &amp;&amp; echo &quot;SSE 4.2 supported&quot; || echo &quot;SSE 4.2 not supported&quot;显示：SSE 4.2 su">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.alexcld.com/img/girl4.jpg">
+<meta property="article:published_time" content="2021-07-07T06:41:05.000Z">
+<meta property="article:modified_time" content="2021-07-07T06:47:55.549Z">
+<meta property="article:author" content="Alex">
+<meta property="article:tag" content="clickhouse单机部署及实时同步mysql数据">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.alexcld.com/img/girl4.jpg"><link rel="shortcut icon" href="https://img.alexcld.com/img/author.png"><link rel="canonical" href="http://alexcld.com/posts/24143"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?ed29f24d552b68e914260fcff2860767";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: {"text":"I,LOVE,YOU","fontSize":"15px"},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-07-07 14:47:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><link rel="stylesheet" href="APlayer.min.css"><div id="aplayer"></div><script src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js" async></script><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = '2'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/flipcountdown.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/pool.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/css/iconfont.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/alexclownfish/hexo-gitcalendar@v1.0/gitcalendar.css"/><meta name="generator" content="Hexo 5.2.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://img.alexcld.com/img/author.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/download"><i class="fa-fw fa fa-download"></i><span> 下载</span></a></div><div class="menus_item"><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 追剧怪</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/books/"><i class="fa-fw fa fa-heartbeat"></i><span> 书架</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" href="/tgxxl/"><i class="fa-fw fa fa-gamepad"></i><span> 糖果消消乐</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 博主</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.alexcld.com/img/girl4.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Alexcld</a></span><span id="weather-v2-plugin-simple"></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/download"><i class="fa-fw fa fa-download"></i><span> 下载</span></a></div><div class="menus_item"><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 追剧怪</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/books/"><i class="fa-fw fa fa-heartbeat"></i><span> 书架</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" href="/tgxxl/"><i class="fa-fw fa fa-gamepad"></i><span> 糖果消消乐</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 博主</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><h1 class="post-title">clickhouse单机部署及实时同步mysql数据</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-07-07T06:41:05.000Z" title="发表于 2021-07-07 14:41:05">2021-07-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-07-07T06:47:55.549Z" title="更新于 2021-07-07 14:47:55">2021-07-07</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">953</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>4分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="clickhouse单机部署及实时同步mysql数据"><a href="#clickhouse单机部署及实时同步mysql数据" class="headerlink" title="clickhouse单机部署及实时同步mysql数据"></a>clickhouse单机部署及实时同步mysql数据</h1><h2 id="clickhouse20-8-3部分"><a href="#clickhouse20-8-3部分" class="headerlink" title="clickhouse20.8.3部分"></a>clickhouse20.8.3部分</h2><h4 id="示例版本：20-8-3"><a href="#示例版本：20-8-3" class="headerlink" title="示例版本：20.8.3"></a>示例版本：20.8.3</h4><h4 id="环境检查"><a href="#环境检查" class="headerlink" title="环境检查"></a>环境检查</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grep -q sse4_2 &#x2F;proc&#x2F;cpuinfo &amp;&amp; echo &quot;SSE 4.2 supported&quot; || echo &quot;SSE 4.2 not supported&quot;</span><br><span class="line">显示：SSE 4.2 supported，则环境支持</span><br></pre></td></tr></table></figure>
+<h4 id="下载安装（单机模式）"><a href="#下载安装（单机模式）" class="headerlink" title="下载安装（单机模式）"></a>下载安装（单机模式）</h4><p>安装依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install -y curl</span><br><span class="line">yum install -y libtool</span><br></pre></td></tr></table></figure>
+<p>添加Clickhouse 的yum镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -s https:&#x2F;&#x2F;packagecloud.io&#x2F;install&#x2F;repositories&#x2F;altinity&#x2F;clickhouse&#x2F;script.rpm.sh | sudo bash</span><br></pre></td></tr></table></figure>
+<p>检查镜像情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum list | grep clickhouse</span><br></pre></td></tr></table></figure>
+<h4 id="安装-server-client"><a href="#安装-server-client" class="headerlink" title="安装 server client"></a>安装 server client</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">yum install -y clickhouse-server </span><br><span class="line">yum install -y clickhouse-client</span><br><span class="line">安装完后</span><br><span class="line">vim &#x2F;etc&#x2F;clickhouse-server&#x2F;users.xml</span><br><span class="line">            &lt;password&gt;alexNB&lt;&#x2F;password&gt;</span><br><span class="line">给default用户设置密码</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">启动server</span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;clickhouse-server start|restart|stop</span><br><span class="line">启动client CLI</span><br><span class="line">clickhouse-client</span><br><span class="line">clickhouse-client -m #可以在命令窗口输入多行命令</span><br><span class="line">停止</span><br><span class="line">systemctl stop clickhouse-server</span><br></pre></td></tr></table></figure>
+
+<h4 id="外网访问-可选"><a href="#外网访问-可选" class="headerlink" title="外网访问(可选)"></a>外网访问(可选)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;clickhouse-server&#x2F;config.xml</span><br><span class="line">把 &lt;listen_host&gt;::&lt;&#x2F;listen_host&gt; 的注释打开，这样的话才能让ClickHouse被除本机以外的服务器访问</span><br><span class="line">如果禁用了ipv6，使用下面配置</span><br><span class="line">&lt;listen_host&gt;0.0.0.0&lt;&#x2F;listen_host&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改默认目录</li>
+<li>服务端的配置目录：/etc/clickhouse-server</li>
+<li>数据文件路径：var/lib/clickhouse <path>/var/lib/clickhouse/</path></li>
+<li>日志文件路径： /var/log/clickhouse-server/ 如<log>/var/log/clickhouse-server/clickhouse-server.log</li>
+<li>存储和日志需要建议修改为非系统盘，其他默认即可<h4 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">查看安装</span><br><span class="line">yum list installed | grep clickhouse</span><br><span class="line">clickhouse-client.noarch               21.3.3.14-2                     @repo.clickhouse.tech_rpm_stable_x86_64</span><br><span class="line">clickhouse-common-static.x86_64        21.3.3.14-2                     @repo.clickhouse.tech_rpm_stable_x86_64</span><br><span class="line">clickhouse-server.noarch               21.3.3.14-2                     @repo.clickhouse.tech_rpm_stable_x86_64</span><br><span class="line">卸载并删除目录</span><br><span class="line">yum remove -y clickhouse-common-static</span><br><span class="line">yum remove -y clickhouse-server-commonrm -rf &#x2F;var&#x2F;lib&#x2F;clickhouserm -rf &#x2F;etc&#x2F;clickhouse*rm -rf &#x2F;var&#x2F;log&#x2F;clickhouse*</span><br></pre></td></tr></table></figure>
+<h2 id="mysql-8-13"><a href="#mysql-8-13" class="headerlink" title="mysql_8.13"></a>mysql_8.13</h2><h4 id="安装完master之后-执行sql查看是否满足条件"><a href="#安装完master之后-执行sql查看是否满足条件" class="headerlink" title="安装完master之后,执行sql查看是否满足条件"></a>安装完master之后,执行sql查看是否满足条件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#39;%gtid_mode%&#39;;</span><br><span class="line">+---------------+-------+</span><br><span class="line">| Variable_name | Value |</span><br><span class="line">+---------------+-------+</span><br><span class="line">| gtid_mode     | ON    |</span><br><span class="line">+---------------+-------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line">mysql&gt; show variables like &#39;%enforce_gtid_consistency%&#39;;</span><br><span class="line">+--------------------------+-------+</span><br><span class="line">| Variable_name            | Value |</span><br><span class="line">+--------------------------+-------+</span><br><span class="line">| enforce_gtid_consistency | ON    |</span><br><span class="line">+--------------------------+-------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line">mysql&gt; show variables like &#39;%binlog_format%&#39;;</span><br><span class="line">+---------------+-------+</span><br><span class="line">| Variable_name | Value |</span><br><span class="line">+---------------+-------+</span><br><span class="line">| binlog_format | ROW   |</span><br><span class="line">+---------------+-------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h4 id="若不满足修改配置文件并重启mysql"><a href="#若不满足修改配置文件并重启mysql" class="headerlink" title="若不满足修改配置文件并重启mysql"></a>若不满足修改配置文件并重启mysql</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;etc&#x2F;my.cnf</span><br><span class="line"></span><br><span class="line">gtid_mode&#x3D;ON</span><br><span class="line">enforce_gtid_consistency&#x3D;1</span><br><span class="line">binlog_format&#x3D;ROW</span><br></pre></td></tr></table></figure>
+<h4 id="MySQL8创建用户并授权的语句"><a href="#MySQL8创建用户并授权的语句" class="headerlink" title="MySQL8创建用户并授权的语句"></a>MySQL8创建用户并授权的语句</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;create user brady@&#39;%&#39; identified  by &#39;brady&#39;;</span><br></pre></td></tr></table></figure>
+授权示例<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;grant all privileges on *.* to brady@&#39;%&#39; with grant option;</span><br></pre></td></tr></table></figure>
+刷新权限<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure>
+修改远程连接用户的加密规则<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;ALTER USER &#39;brady&#39;@&#39;%&#39; IDENTIFIED WITH mysql_native_password BY &#39;brady&#39;;</span><br></pre></td></tr></table></figure>
+<h2 id="数据同步"><a href="#数据同步" class="headerlink" title="数据同步"></a>数据同步</h2><h4 id="进入clickhouse数据库"><a href="#进入clickhouse数据库" class="headerlink" title="进入clickhouse数据库"></a>进入clickhouse数据库</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clickhouse-client -u default -h &lt;IP&gt; --password alexNB</span><br></pre></td></tr></table></figure>
+<h4 id="开启复制通道"><a href="#开启复制通道" class="headerlink" title="开启复制通道"></a>开启复制通道</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select * from system.settings where name &#x3D;&#39;allow_experimental_database_materialize_mysql&#39;;</span><br><span class="line"></span><br><span class="line">SET allow_experimental_database_materialize_mysql&#x3D;1;</span><br></pre></td></tr></table></figure>
+<h4 id="同步数据"><a href="#同步数据" class="headerlink" title="同步数据"></a>同步数据</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE DBNAME ENGINE &#x3D; MaterializeMySQL(&#39;MYSQLIP:PORT&#39;, &#39;SOURCEDB&#39;, &#39;MYSQL_DB&#39;, &#39;PASSWORD&#39;);</span><br><span class="line"></span><br><span class="line">CREATE DATABASE data_dataTransfer_ch_update ENGINE &#x3D; MaterializeMySQL(&#39;172.22.254.217:3306&#39;, &#39;data_dataTransfer_ch&#39;, &#39;brady&#39;, &#39;brady&#39;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">k8s-master :) show databases;</span><br><span class="line">SHOW DATABASES</span><br><span class="line">Query id: 7469cc9b-da21-44ad-9eb5-f32cddcadbe7</span><br><span class="line">┌─name────────────────────────┐</span><br><span class="line">│ audit                       │</span><br><span class="line">│ data_dataTransfer_ch        │</span><br><span class="line">│ data_dataTransfer_ch_update │</span><br><span class="line">│ default                     │</span><br><span class="line">│ system                      │</span><br><span class="line">│ tstu                        │</span><br><span class="line">└─────────────────────────────┘</span><br><span class="line">6 rows in set. Elapsed: 0.002 sec. </span><br><span class="line"></span><br><span class="line">k8s-master :) use data_dataTransfer_ch_update;</span><br><span class="line">USE data_dataTransfer_ch_update</span><br><span class="line">Query id: 552cecae-df70-49e1-a4c4-8bae3e7f4f7d</span><br><span class="line">Ok.</span><br><span class="line">0 rows in set. Elapsed: 0.001 sec. </span><br><span class="line"></span><br><span class="line">k8s-master :) select task_id,data_val from data_dataTransfer_ch_update.t_task_check_field_data where task_id &#x3D; &#39;796D82C8-CB64-41AC-84EE-9D292880FEBC&#39;;</span><br><span class="line"></span><br><span class="line">SELECT</span><br><span class="line">    task_id,</span><br><span class="line">    data_val</span><br><span class="line">FROM data_dataTransfer_ch_update.t_task_check_field_data</span><br><span class="line">WHERE task_id &#x3D; &#39;796D82C8-CB64-41AC-84EE-9D292880FEBC&#39;</span><br><span class="line"></span><br><span class="line">Query id: 676b491b-df7a-4010-84ed-acb8dec5a393</span><br><span class="line"></span><br><span class="line">┌─task_id──────────────────────────────┬─data_val──────────────────────────────────────────────────────────────┐</span><br><span class="line">│ 796D82C8-CB64-41AC-84EE-9D292880FEBC │ http:&#x2F;&#x2F;110.110.110.110:8085&#x2F;vul&#x2F;xss&#x2F;xssblind&#x2F;admin_login.php            │</span><br><span class="line">│ 796D82C8-CB64-41AC-84EE-9D292880FEBC │ http:&#x2F;&#x2F;110.110.110.110:8085&#x2F;vul&#x2F;xss&#x2F;xssblind&#x2F;admin_login.php            │</span><br><span class="line">│ 796D82C8-CB64-41AC-84EE-9D292880FEBC │ http:&#x2F;&#x2F;110.110.110.110:8085&#x2F;&#x2F;vul&#x2F;xss&#x2F;xsspost&#x2F;post_login.php             │</span><br><span class="line">│ 796D82C8-CB64-41AC-84EE-9D292880FEBC │ http:&#x2F;&#x2F;110.110.110.110:8085&#x2F;vul&#x2F;sqli&#x2F;sqli_iu&#x2F;sqli_login.php             │</span><br><span class="line">│ 796D82C8-CB64-41AC-84EE-9D292880FEBC │ http:&#x2F;&#x2F;110.110.110.110:8085&#x2F;vul&#x2F;infoleak&#x2F;findabc.php                    │</span><br></pre></td></tr></table></figure>
+至此实时同步结束<br>可以在mysql对数据表进行增删改操作，在clickhouse可以看到效果</li>
+</ul>
+<p>clickhouse版本更新迭代较快，老版本bug较多不稳定。<br>20.8这个版本bug也挺多，如果有遇到可以参考下篇文章<br><a href="https://alexcld.com/posts/35255.html">大佬移步这里</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45509582">或者这里</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Alex</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://alexcld.com/posts/24143.html">http://alexcld.com/posts/24143.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://alexcld.com" target="_blank">Alexcld</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/clickhouse%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2%E5%8F%8A%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5mysql%E6%95%B0%E6%8D%AE/">clickhouse单机部署及实时同步mysql数据</a></div><div class="post_share"><div class="social-share" data-image="https://img.alexcld.com/img/girl4.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/35255.html"><img class="prev-cover" src="https://img.alexcld.com/img/231712-160450303247b9.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">clickhouse升级最新版21.6.6</div></div></a></div><div class="next-post pull-right"><a href="/posts/2313.html"><img class="next-cover" src="https://img.alexcld.com/img/171302-1586077982d6cd.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">K8s nodePort、port、targetPort、hostPort详解</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Twikoo</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="twikoo"></div></div></div></div></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://img.alexcld.com/img/author.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Alex</div><div class="author-info__description">children don't lie</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/alexclownfish"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/alexclownfish" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:ywz0207@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is AKA Alex,respect yeah</div><timing></timing></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="card-content"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#clickhouse%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2%E5%8F%8A%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5mysql%E6%95%B0%E6%8D%AE"><span class="toc-number">1.</span> <span class="toc-text">clickhouse单机部署及实时同步mysql数据</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#clickhouse20-8-3%E9%83%A8%E5%88%86"><span class="toc-number">1.1.</span> <span class="toc-text">clickhouse20.8.3部分</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E7%89%88%E6%9C%AC%EF%BC%9A20-8-3"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">示例版本：20.8.3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%A3%80%E6%9F%A5"><span class="toc-number">1.1.0.2.</span> <span class="toc-text">环境检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-number">1.1.0.3.</span> <span class="toc-text">下载安装（单机模式）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-server-client"><span class="toc-number">1.1.0.4.</span> <span class="toc-text">安装 server client</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%96%E7%BD%91%E8%AE%BF%E9%97%AE-%E5%8F%AF%E9%80%89"><span class="toc-number">1.1.0.5.</span> <span class="toc-text">外网访问(可选)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%B8%E8%BD%BD"><span class="toc-number">1.1.0.6.</span> <span class="toc-text">卸载</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-8-13"><span class="toc-number">1.2.</span> <span class="toc-text">mysql_8.13</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%AE%8Cmaster%E4%B9%8B%E5%90%8E-%E6%89%A7%E8%A1%8Csql%E6%9F%A5%E7%9C%8B%E6%98%AF%E5%90%A6%E6%BB%A1%E8%B6%B3%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">安装完master之后,执行sql查看是否满足条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8B%A5%E4%B8%8D%E6%BB%A1%E8%B6%B3%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%B9%B6%E9%87%8D%E5%90%AFmysql"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">若不满足修改配置文件并重启mysql</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MySQL8%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7%E5%B9%B6%E6%8E%88%E6%9D%83%E7%9A%84%E8%AF%AD%E5%8F%A5"><span class="toc-number">1.2.0.3.</span> <span class="toc-text">MySQL8创建用户并授权的语句</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5"><span class="toc-number">1.3.</span> <span class="toc-text">数据同步</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E5%85%A5clickhouse%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.3.0.1.</span> <span class="toc-text">进入clickhouse数据库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%90%AF%E5%A4%8D%E5%88%B6%E9%80%9A%E9%81%93"><span class="toc-number">1.3.0.2.</span> <span class="toc-text">开启复制通道</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.0.3.</span> <span class="toc-text">同步数据</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/43435.html" title="创建lvm格式磁盘分区"><img src="https://img.alexcld.com/img/girl3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="创建lvm格式磁盘分区"/></a><div class="content"><a class="title" href="/posts/43435.html" title="创建lvm格式磁盘分区">创建lvm格式磁盘分区</a><time datetime="2021-08-12T06:02:22.000Z" title="发表于 2021-08-12 14:02:22">2021-08-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/63478.html" title="k8s+jenkins实现CI，CD"><img src="https://img.alexcld.com/img/222823-160337690344c5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="k8s+jenkins实现CI，CD"/></a><div class="content"><a class="title" href="/posts/63478.html" title="k8s+jenkins实现CI，CD">k8s+jenkins实现CI，CD</a><time datetime="2021-07-28T06:07:46.000Z" title="发表于 2021-07-28 14:07:46">2021-07-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6543.html" title="alertmanager钉钉报警"><img src="https://img.alexcld.com/img/nvpu3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="alertmanager钉钉报警"/></a><div class="content"><a class="title" href="/posts/6543.html" title="alertmanager钉钉报警">alertmanager钉钉报警</a><time datetime="2021-07-27T06:37:35.000Z" title="发表于 2021-07-27 14:37:35">2021-07-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/267647.html" title="监控体系部署之后走上了grafana模板踩坑之路"><img src="https://img.alexcld.com/img/195251-16080331718ccc.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="监控体系部署之后走上了grafana模板踩坑之路"/></a><div class="content"><a class="title" href="/posts/267647.html" title="监控体系部署之后走上了grafana模板踩坑之路">监控体系部署之后走上了grafana模板踩坑之路</a><time datetime="2021-07-22T05:33:31.000Z" title="发表于 2021-07-22 13:33:31">2021-07-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/24142.html" title="Prometheus邮件告警自定义模板的触发时间为utc的解决方法"><img src="https://img.alexcld.com/img/193615-1568028975fe7b.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Prometheus邮件告警自定义模板的触发时间为utc的解决方法"/></a><div class="content"><a class="title" href="/posts/24142.html" title="Prometheus邮件告警自定义模板的触发时间为utc的解决方法">Prometheus邮件告警自定义模板的触发时间为utc的解决方法</a><time datetime="2021-07-21T09:30:06.000Z" title="发表于 2021-07-21 17:30:06">2021-07-21</time></div></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://img.alexcld.com/img/girl4.jpg)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Alex</div><div class="framework-info"><span> </span><a target="_blank" rel="noopener" href="https://github.com/alexclownfish">Github</a><span class="footer-separator">|</span><span> </span><a target="_blank" rel="noopener" href="https://me.csdn.net/weixin_45509582">CSDN</a></div><div class="footer_custom_text"><span id="runtime"></span></div><div class="icp"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/"><img class="icp-icon" src="/img/icp.png" alt="ICP"/><span>豫ICP备2020032561号-1</span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: 'rdtTOtMkfivtPvkQaaDXmJUd-gzGzoHsz',
+      appKey: 'E68vw0GUqAynKmIiHtw9FLRA',
+      placeholder: '留下你的看法吧！！',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'zh-CN',
+      recordIP: true,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: true,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign({}, initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadTwikoo () {
+  function init () {
+    twikoo.init({ 
+      envId: '' 
+    })
+  }
+
+  if (typeof twikoo.init === 'function') {
+    init()
+  } else {
+    $.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js', init)
+  }
+}
+
+if ('Valine' === 'Twikoo' || !false) {
+  if (false) btf.loadComment(document.getElementById('twikoo'), loadTwikoo)
+  else loadTwikoo()
+} else {
+  function loadOtherComment () {
+    loadTwikoo()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/js/flipcountdown.js"></script><script data-pjax src="/js/runtime.js"></script><script src="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@latest/butterfly/js/pool.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script><script src="https://cdn.jsdelivr.net/gh/alexclownfish/hexo-gitcalendar@v1.0/gitcalendar.js"></script><script src="https://apip.weatherdt.com/simple/static/js/weather-simple-common.js?v=2.0"></script><script src="/js/alexweather.js"></script><script src="/js/timing.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" async="async" mobile="false"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/tororo.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
